@@ -11,6 +11,7 @@ import { Repository } from 'typeorm';
 
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { PaginationDto } from '../common/dtos/pagination.dto';
 
 import { Product } from './entities/product.entity';
 
@@ -35,9 +36,14 @@ export class ProductsService {
     }
   }
 
-  async findAll(): Promise<Product[]> {
+  async findAll(paginationDto: PaginationDto): Promise<Product[]> {
     try {
-      return await this.productRepository.find();
+      const {limit = 10, offset = 0} = paginationDto;
+
+      return await this.productRepository.find({
+        take: limit,
+        skip: offset,
+      });
     } catch (error) {
       this.handleDbExceptions(error);
     }
