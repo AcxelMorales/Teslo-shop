@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, DeleteResult, Repository } from 'typeorm';
 
 import { validate as isUUID } from 'uuid';
 
@@ -153,6 +153,16 @@ export class ProductsService {
 
     this.logger.error(error);
     throw new InternalServerErrorException('Unexpected error, check server logs');
+  }
+
+  async deleteAllProducts(): Promise<DeleteResult> {
+    const query = this.productRepository.createQueryBuilder('product');
+
+    try {
+      return await query.delete().where({}).execute();
+    } catch (error) {
+      this.handleDbExceptions(error);
+    }
   }
 
 }
