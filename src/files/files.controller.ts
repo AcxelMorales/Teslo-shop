@@ -5,11 +5,14 @@ import {
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
+
 import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
 
 import { FilesService } from './files.service';
 
 import { fileFilter } from './helpers/fileFilter';
+import { fileNamer } from './helpers/fileNamer';
 
 @Controller('files')
 export class FilesController {
@@ -18,7 +21,14 @@ export class FilesController {
 
   @Post('product')
   @UseInterceptors(FileInterceptor('file', {
-    fileFilter
+    fileFilter,
+    limits: {
+      fileSize: 1000000
+    },
+    storage: diskStorage({
+      destination: './static/products',
+      filename: fileNamer,
+    })
   }))
   uploadFile(@UploadedFile() file: Express.Multer.File): Express.Multer.File {
     if (!file) {
