@@ -1,7 +1,5 @@
-import { Request } from 'express';
-
 export const fileFilter = (
-  req: Request,
+  _: any,
   file: Express.Multer.File,
   callback: Function,
 ): void => {
