@@ -15,11 +15,13 @@ import { User } from './entities/auth.entity';
   imports: [
     TypeOrmModule.forFeature([User]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
-    JwtModule.register({
-      secret: '123456789',
-      signOptions: {
-        expiresIn: process.env.JWT_SECRET,
-      },
+    JwtModule.registerAsync({
+      useFactory: () => ({
+        secret: '123456789',
+        signOptions: {
+          expiresIn: process.env.JWT_SECRET,
+        },
+      }),
     }),
   ],
   exports: [TypeOrmModule],
