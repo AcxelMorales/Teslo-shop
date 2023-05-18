@@ -9,6 +9,8 @@ import {
 
 import { Observable } from 'rxjs';
 
+import { META_ROLES } from '../decorators/role-protected.decorator';
+
 import { User } from '../entities/auth.entity';
 
 @Injectable()
@@ -18,7 +20,7 @@ export class UserRoleGuard implements CanActivate {
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
-    const validRoles: string[] = this.reflector.get('roles', context.getHandler());
+    const validRoles: string[] = this.reflector.get(META_ROLES, context.getHandler());
 
     if (!validRoles) return true;
     if (validRoles.length === 0) return true;
