@@ -24,8 +24,14 @@ export class AuthController {
   }
 
   @Post('signin')
-  loginUser(@Body() loginUserDto: LoginUserDto) {
+  loginUser(@Body() loginUserDto: LoginUserDto): Promise<any> {
     return this.authService.login(loginUserDto);
+  }
+
+  @Get('check-status')
+  @Auth()
+  checkAuthStatus(@GetUser() user: User): Object {
+    return this.authService.checkAuthStatus(user);
   }
 
   @Get('private')
