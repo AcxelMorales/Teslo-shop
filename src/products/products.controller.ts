@@ -10,6 +10,8 @@ import {
   Query,
 } from '@nestjs/common';
 
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
+
 import { ProductsService } from './products.service';
 
 import { CreateProductDto } from './dto/create-product.dto';
@@ -22,6 +24,7 @@ import { User } from '../auth/entities/auth.entity';
 import { Auth } from '../auth/decorators/auth.decorator';
 import { GetUser } from '../auth/decorators/get-user.decorator';
 
+@ApiTags('Products')
 @Controller('products')
 export class ProductsController {
 
@@ -29,6 +32,9 @@ export class ProductsController {
 
   @Post()
   @Auth()
+  @ApiResponse({status: 201, description: 'Product was created', type: Product})
+  @ApiResponse({status: 400, description: 'Bad request'})
+  @ApiResponse({status: 403, description: 'Forbidden. Toke related'})
   create(
     @Body() createProductDto: CreateProductDto,
     @GetUser() user: User,
