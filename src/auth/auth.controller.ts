@@ -1,4 +1,6 @@
-import { Controller, Post, Body, Get, UseGuards, SetMetadata } from '@nestjs/common';
+import { Controller, Post, Body, Get } from '@nestjs/common';
+
+import { ApiTags } from '@nestjs/swagger';
 
 import { AuthService } from './auth.service';
 
@@ -13,6 +15,7 @@ import { User } from './entities/auth.entity';
 
 import { ValidRoles } from './interfaces/valid-roles';
 
+@ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
 
