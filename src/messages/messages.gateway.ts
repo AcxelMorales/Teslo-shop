@@ -13,10 +13,10 @@ export class MessagesGateway implements OnGatewayConnection, OnGatewayDisconnect
   constructor(private readonly messagesService: MessagesService) {}
 
   handleConnection(client: Socket): void {
-    console.log(`Cliente conectado: ${client.id}`);
+    this.messagesService.registerClient(client);
   }
   handleDisconnect(client: any): void {
-    console.log(`Cliente desconectado: ${client.id}`);
+    this.messagesService.removeClient(client.id);
   }
 
 }
