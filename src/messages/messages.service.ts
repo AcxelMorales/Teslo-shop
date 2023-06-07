@@ -19,8 +19,8 @@ export class MessagesService {
     delete this.connectedClients[clientId];
   }
 
-  getConnectedClients(): number {
-    return Object.keys(this.connectedClients).length;
+  getConnectedClients(): string[] {
+    return Object.keys(this.connectedClients);
   }
 
 }
