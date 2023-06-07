@@ -7,19 +7,35 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
+import { JwtService } from '@nestjs/jwt';
+
 import { MessagesService } from './messages.service';
 
 import { NewMessageDto } from './dto/new-message.dto';
+import { JwtPayload } from '../auth/interfaces/jwt-payload.interface';
 
 @WebSocketGateway({ cors: true })
 export class MessagesGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @WebSocketServer() wss: Server;
 
-  constructor(private readonly messagesService: MessagesService) {}
+  constructor(
+    private readonly messagesService: MessagesService,
+    private readonly jwtService: JwtService,
+  ) {}
 
-  handleConnection(client: Socket): void {
-    this.messagesService.registerClient(client);
+  async handleConnection(client: Socket): Promise<void> {
+    const token = client.handshake.headers.auth as string;
+    let payload: JwtPayload;
+
+    try {
+      payload = this.jwtService.verify(token);
+      await this.messagesService.registerClient(client, payload.id);
+    } catch (error) {
+      client.disconnect();
+      return;
+    }
+
     // Emitir a todos
     this.wss.emit('clients-updated', this.messagesService.getConnectedClients());
   }
@@ -44,7 +60,7 @@ export class MessagesGateway implements OnGatewayConnection, OnGatewayDisconnect
     // });
 
     this.wss.emit('message-server', {
-      fullName: client.id,
+      fullName: this.messagesService.getUserFullName(client.id),
       message: payload.message || 'no-message'
     });
 
